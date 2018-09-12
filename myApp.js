@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 /**********************************************
 * 3. FCC Mongo & Mongoose Challenges
 * ==================================
@@ -7,6 +8,8 @@
 /*  ================== */
 
 /** 1) Install & Set up mongoose */
+mongoose.connect(process.env.MONGO_DB);
+var Schema = mongoose.Schema;
 
 // Add `mongodb` and `mongoose` to the project's `package.json`. Then require 
 // `mongoose`. Store your **mLab** database URI in the private `.env` file 
@@ -38,7 +41,13 @@
 
 // <Your code here >
 
-var Person /* = <Your Model> */
+var PersonSchema = new Schema({
+  name:  {type: String, required: [true]},
+  age: Number,
+  favoriteFoods: [String]
+});
+
+var Person =  mongoose.model('Person', PersonSchema);
 
 // **Note**: GoMix is a real server, and in real servers interactions with
 // the db are placed in handler functions, to be called when some event happens
@@ -76,10 +85,10 @@ var Person /* = <Your Model> */
 // });
 
 var createAndSavePerson = function(done) {
-  
-  done(null /*, data*/);
-
+  var person = new Person({name: 'John', age: 25, favoriteFoods: ['Spaghetti']});
+  person.save(done);
 };
+
 
 /** 4) Create many People with `Model.create()` */
 
@@ -90,10 +99,8 @@ var createAndSavePerson = function(done) {
 // Create many people using `Model.create()`, using the function argument
 // 'arrayOfPeople'.
 
-var createManyPeople = function(arrayOfPeople, done) {
-    
-    done(null/*, data*/);
-    
+var createManyPeople = function(arrayOfPeople, done) {    
+    Person.insertMany(arrayOfPeople, done);    
 };
 
 /** # C[R]UD part II - READ #
@@ -107,10 +114,8 @@ var createManyPeople = function(arrayOfPeople, done) {
 // It supports an extremely wide range of search options. Check it in the docs.
 // Use the function argument `personName` as search key.
 
-var findPeopleByName = function(personName, done) {
-  
-  done(null/*, data*/);
-
+var findPeopleByName = function(personName, done) {  
+  Person.find({ name: personName }).exec(done);
 };
 
 /** 6) Use `Model.findOne()` */
